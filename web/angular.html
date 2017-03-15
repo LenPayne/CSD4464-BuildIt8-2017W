@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Angular Sample</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.angularjs.org/1.6.3/angular.js"></script>
+        <script>
+            var myApp = angular.module('myApp', []);
+            myApp.controller('helloCtrl', function ($scope) {
+            $scope.name = "World";
+            });
+            myApp.controller('todoCtrl', function($scope, $http) {
+                $scope.todoList = [];
+                function getItems() {
+                $http.get('api/todo').then(
+                    function(todos){
+                        $scope.todoList = todos.data;
+                    },
+                    function(error){
+                        alert(error.message);
+                    });
+                }
+                getItems();
+                $scope.addItem = function() {
+                    $http.post('api/todo', {"todo": $scope.item}).then(
+                        getItems(),
+                        function(error){
+                            alert(error.message);
+                        }
+                    );
+                }
+            });
+        </script>
+    </head>
+    <body ng-app="myApp">
+        <div ng-controller="helloCtrl">
+            <h1>Hello {{name}}</h1>
+            <p><input ng-model="name" /></p>
+        </div>
+        <div ng-controller="todoCtrl">
+            <p>
+                <input ng-model="item" />
+                <button ng-click="addItem()">Add</button>
+            </p>
+            <ul>
+                <li ng-repeat="todo in todoList">{{todo}}</li>
+            </ul>
+        </div>
+    </body>
+</html>

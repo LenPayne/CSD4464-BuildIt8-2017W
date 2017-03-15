@@ -5,11 +5,13 @@
  */
 package rest;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import javax.enterprise.context.ApplicationScoped;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,24 +22,25 @@ import javax.ws.rs.Produces;
  *
  * @author c0587637
  */
-@Path("/json")
-public class JSONRest {
+@Path("/todo")
+@ApplicationScoped
+public class TodoRest {
+
+    List<String> todoList = new ArrayList<>();
 
     @GET
     @Produces("application/json")
-    public JsonObject getJson() {
-        JsonObjectBuilder json = Json.createObjectBuilder();
-        json.add("name", "Bobby Tables");
-        json.add("id", 12342);
-        return json.build();
+    public JsonArray get() {
+        JsonArrayBuilder arr = Json.createArrayBuilder();
+        for (String todo : todoList) {
+            arr.add(todo);
+        }
+        return arr.build();
     }
-
+    
     @POST
     @Consumes("application/json")
-    @Produces("application/json")
-    public JsonObject postJson(JsonObject json) {
-        System.out.println(json.getInt("id", 0));
-        System.out.println(json.getString("name", ""));
-        return json;
+    public void post(JsonObject json) {
+        todoList.add(json.getString("todo", ""));
     }
 }
